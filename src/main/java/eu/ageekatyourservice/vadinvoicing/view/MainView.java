@@ -9,6 +9,7 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
@@ -53,18 +54,23 @@ public class MainView extends VerticalLayout {
     
     private HorizontalLayout createHeader() {
         H1 title = new H1("Intervention Logs");
-        
+
+        RouterLink customersLink = new RouterLink("Customers", CustomersView.class);
+
         Button logoutButton = new Button("Logout");
         logoutButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         logoutButton.addClickListener(e -> {
             authenticationContext.logout();
         });
-        
-        HorizontalLayout header = new HorizontalLayout(title, logoutButton);
+
+        HorizontalLayout right = new HorizontalLayout(customersLink, logoutButton);
+        right.setAlignItems(Alignment.CENTER);
+
+        HorizontalLayout header = new HorizontalLayout(title, right);
         header.setWidthFull();
         header.setJustifyContentMode(JustifyContentMode.BETWEEN);
         header.setAlignItems(Alignment.CENTER);
-        
+
         return header;
     }
     
