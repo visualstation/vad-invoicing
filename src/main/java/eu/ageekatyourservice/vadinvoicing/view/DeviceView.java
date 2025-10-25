@@ -34,15 +34,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.format.DateTimeFormatter;
 
-@Route("devices")
-@PageTitle("Devices")
+@Route(value = "devices", layout = MainLayout.class)
+@PageTitle("Devices | VAD Invoicing")
 @PermitAll
 public class DeviceView extends VerticalLayout {
 
     private final DeviceService deviceService;
     private final DeviceCommentService commentService;
     private final CustomerService customerService;
-    private final AuthenticationContext authenticationContext;
 
     private final Grid<Device> deviceGrid = new Grid<>(Device.class, false);
     private final Grid<DeviceComment> commentGrid = new Grid<>(DeviceComment.class, false);
@@ -62,16 +61,15 @@ public class DeviceView extends VerticalLayout {
         this.deviceService = deviceService;
         this.commentService = commentService;
         this.customerService = customerService;
-        this.authenticationContext = authenticationContext;
 
         addClassName("device-view");
         setSizeFull();
+        setPadding(true);
 
         configureDeviceGrid();
         configureCommentGrid();
 
         add(
-            createHeader(),
             createToolbar(),
             deviceGrid,
             new H2("Comments for selected device"),
@@ -79,28 +77,6 @@ public class DeviceView extends VerticalLayout {
         );
 
         updateDeviceList();
-    }
-
-    private HorizontalLayout createHeader() {
-        H1 title = new H1("Devices");
-
-        Button backButton = new Button("Back to Main", new Icon(VaadinIcon.ARROW_LEFT));
-        backButton.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate("")));
-
-        Button customersButton = new Button("Customers");
-        customersButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
-        customersButton.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate("customers")));
-
-        Button logoutButton = new Button("Logout");
-        logoutButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        logoutButton.addClickListener(e -> authenticationContext.logout());
-
-        HorizontalLayout header = new HorizontalLayout(title, customersButton, backButton, logoutButton);
-        header.setWidthFull();
-        header.setJustifyContentMode(JustifyContentMode.BETWEEN);
-        header.setAlignItems(Alignment.CENTER);
-
-        return header;
     }
 
     private HorizontalLayout createToolbar() {

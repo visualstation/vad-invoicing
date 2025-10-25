@@ -29,13 +29,12 @@ import com.vaadin.flow.spring.security.AuthenticationContext;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Route("customers")
-@PageTitle("Customers")
+@Route(value = "customers", layout = MainLayout.class)
+@PageTitle("Customers | VAD Invoicing")
 @PermitAll
 public class CustomerView extends VerticalLayout {
     
     private final CustomerService customerService;
-    private final AuthenticationContext authenticationContext;
     private final Grid<Customer> grid = new Grid<>(Customer.class, false);
     private final TextField filterText = new TextField();
     
@@ -44,40 +43,19 @@ public class CustomerView extends VerticalLayout {
     @Autowired
     public CustomerView(CustomerService customerService, AuthenticationContext authenticationContext) {
         this.customerService = customerService;
-        this.authenticationContext = authenticationContext;
         
         addClassName("customer-view");
         setSizeFull();
+        setPadding(true);
         
         configureGrid();
         
         add(
-            createHeader(),
             createToolbar(),
             grid
         );
         
         updateList();
-    }
-    
-    private HorizontalLayout createHeader() {
-        H1 title = new H1("Customers");
-        
-        Button backButton = new Button("Back to Main", new Icon(VaadinIcon.ARROW_LEFT));
-        backButton.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate("")));
-        
-        Button logoutButton = new Button("Logout");
-        logoutButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        logoutButton.addClickListener(e -> {
-            authenticationContext.logout();
-        });
-        
-        HorizontalLayout header = new HorizontalLayout(title, backButton, logoutButton);
-        header.setWidthFull();
-        header.setJustifyContentMode(JustifyContentMode.BETWEEN);
-        header.setAlignItems(Alignment.CENTER);
-        
-        return header;
     }
     
     private HorizontalLayout createToolbar() {

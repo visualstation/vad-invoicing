@@ -1,153 +1,108 @@
 package eu.ageekatyourservice.vadinvoicing.view;
 
-import eu.ageekatyourservice.vadinvoicing.entity.InterventionLog;
-import eu.ageekatyourservice.vadinvoicing.service.InterventionLogService;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.security.AuthenticationContext;
+import eu.ageekatyourservice.vadinvoicing.service.CustomerService;
+import eu.ageekatyourservice.vadinvoicing.service.DeviceService;
+import eu.ageekatyourservice.vadinvoicing.service.InterventionLogService;
 import jakarta.annotation.security.PermitAll;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.format.DateTimeFormatter;
-
-@Route("")
-@PageTitle("Intervention Logs")
+@Route(value = "", layout = MainLayout.class)
+@PageTitle("Dashboard | VAD Invoicing")
 @PermitAll
 public class MainView extends VerticalLayout {
     
+    private final CustomerService customerService;
+    private final DeviceService deviceService;
     private final InterventionLogService logService;
-    private final AuthenticationContext authenticationContext;
-    private final Grid<InterventionLog> grid = new Grid<>(InterventionLog.class, false);
-    private final TextField filterText = new TextField();
     
-    private static final DateTimeFormatter DATE_FORMATTER = 
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    
-    @Autowired
-    public MainView(InterventionLogService logService, AuthenticationContext authenticationContext) {
+    public MainView(CustomerService customerService, 
+                    DeviceService deviceService,
+                    InterventionLogService logService,
+                    AuthenticationContext authenticationContext) {
+        this.customerService = customerService;
+        this.deviceService = deviceService;
         this.logService = logService;
-        this.authenticationContext = authenticationContext;
         
-        addClassName("main-view");
+        addClassName("dashboard-view");
         setSizeFull();
+        setPadding(true);
         
-        configureGrid();
+        H1 title = new H1("Dashboard");
         
-        add(
-            createHeader(),
-            createToolbar(),
-            grid
+        Paragraph welcomeText = new Paragraph(
+            "Welcome to VAD Invoicing System. Manage your customers, devices, and intervention logs efficiently."
         );
         
-        updateList();
+        // Statistics cards
+        HorizontalLayout statsLayout = new HorizontalLayout();
+        statsLayout.setWidthFull();
+        statsLayout.setSpacing(true);
+        
+        statsLayout.add(
+            createStatCard("Total Customers", 
+                String.valueOf(customerService.getAllCustomers().size()), 
+                VaadinIcon.USERS, 
+                "#2196F3"),
+            createStatCard("Total Devices", 
+                String.valueOf(deviceService.getAll().size()), 
+                VaadinIcon.LAPTOP, 
+                "#4CAF50"),
+            createStatCard("Total Logs", 
+                String.valueOf(logService.getAllLogs().size()), 
+                VaadinIcon.FILE_TEXT, 
+                "#FF9800")
+        );
+        
+        // Quick actions section
+        H2 quickActionsTitle = new H2("Quick Actions");
+        Paragraph quickActionsText = new Paragraph(
+            "Use the sidebar on the left to navigate to different sections of the application."
+        );
+        
+        add(title, welcomeText, statsLayout, quickActionsTitle, quickActionsText);
     }
     
-    private HorizontalLayout createHeader() {
-        H1 title = new H1("Intervention Logs");
+    private Div createStatCard(String title, String value, VaadinIcon iconType, String color) {
+        Div card = new Div();
+        card.getStyle()
+            .set("padding", "20px")
+            .set("background-color", "var(--lumo-contrast-5pct)")
+            .set("border-radius", "8px")
+            .set("border-left", "4px solid " + color)
+            .set("flex", "1");
         
-        Button customersButton = new Button("Customers");
-        customersButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
-        customersButton.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate("customers")));
-
-        Button devicesButton = new Button("Devices");
-        devicesButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
-        devicesButton.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate("devices")));
+        Icon icon = iconType.create();
+        icon.setSize("48px");
+        icon.getStyle().set("color", color);
         
-        Button logoutButton = new Button("Logout");
-        logoutButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        logoutButton.addClickListener(e -> {
-            authenticationContext.logout();
-        });
+        H2 valueText = new H2(value);
+        valueText.getStyle()
+            .set("margin", "10px 0")
+            .set("color", color);
         
-        HorizontalLayout header = new HorizontalLayout(title, customersButton, devicesButton, logoutButton);
-        header.setWidthFull();
-        header.setJustifyContentMode(JustifyContentMode.BETWEEN);
-        header.setAlignItems(Alignment.CENTER);
+        Span titleText = new Span(title);
+        titleText.getStyle()
+            .set("color", "var(--lumo-secondary-text-color)")
+            .set("font-size", "var(--lumo-font-size-s)");
         
-        return header;
-    }
-    
-    private HorizontalLayout createToolbar() {
-        filterText.setPlaceholder("Filter by username or description...");
-        filterText.setClearButtonVisible(true);
-        filterText.setValueChangeMode(ValueChangeMode.LAZY);
-        filterText.addValueChangeListener(e -> updateList());
-        filterText.setWidth("400px");
+        VerticalLayout content = new VerticalLayout(icon, valueText, titleText);
+        content.setPadding(false);
+        content.setSpacing(false);
+        content.setAlignItems(Alignment.START);
         
-        Button refreshButton = new Button("Refresh");
-        refreshButton.addClickListener(e -> updateList());
+        card.add(content);
         
-        HorizontalLayout toolbar = new HorizontalLayout(filterText, refreshButton);
-        toolbar.setAlignItems(Alignment.CENTER);
-        
-        return toolbar;
-    }
-    
-    private void configureGrid() {
-        grid.addClassName("intervention-log-grid");
-        grid.setSizeFull();
-        grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
-        
-        grid.addColumn(log -> log.getTimestamp().format(DATE_FORMATTER))
-            .setHeader("Date & Time")
-            .setSortable(true)
-            .setWidth("180px")
-            .setFlexGrow(0);
-        
-        grid.addColumn(InterventionLog::getClientId)
-            .setHeader("Client ID")
-            .setSortable(true)
-            .setWidth("130px")
-            .setFlexGrow(0);
-        
-        grid.addColumn(InterventionLog::getUsername)
-            .setHeader("Username")
-            .setSortable(true)
-            .setWidth("200px")
-            .setFlexGrow(0);
-        
-        grid.addColumn(InterventionLog::getDescription)
-            .setHeader("Description")
-            .setSortable(true)
-            .setAutoWidth(true)
-            .setFlexGrow(1);
-        
-        grid.addColumn(InterventionLog::getDuration)
-            .setHeader("Duration (s)")
-            .setSortable(true)
-            .setWidth("120px")
-            .setFlexGrow(0);
-        
-        grid.addColumn(InterventionLog::getBilledDuration)
-            .setHeader("Billed (s)")
-            .setSortable(true)
-            .setWidth("110px")
-            .setFlexGrow(0);
-    }
-    
-    private void updateList() {
-        String filterValue = filterText.getValue();
-        
-        if (filterValue == null || filterValue.isEmpty()) {
-            grid.setItems(logService.getAllLogs());
-        } else {
-            // Simple filter: search in username and description
-            grid.setItems(logService.getAllLogs().stream()
-                .filter(log -> 
-                    log.getUsername().toLowerCase().contains(filterValue.toLowerCase()) ||
-                    log.getDescription().toLowerCase().contains(filterValue.toLowerCase())
-                )
-                .toList()
-            );
-        }
+        return card;
     }
 }
