@@ -10,7 +10,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 
 @Route("login")
-@PageTitle("Login | Intervention Log Viewer")
+@PageTitle("Login | VAD Invoicing")
 @AnonymousAllowed
 public class LoginView extends VerticalLayout implements BeforeEnterObserver {
     
@@ -25,10 +25,13 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
         loginForm.setAction("login");
         loginForm.setForgotPasswordButtonVisible(false);
         
-        add(
-            new H1("Intervention Log Viewer"),
-            loginForm
-        );
+        H1 title = new H1("VAD Invoicing");
+        title.getStyle()
+            .set("color", "var(--lumo-primary-color)")
+            .set("font-weight", "bold")
+            .set("margin-bottom", "var(--lumo-space-m)");
+        
+        add(title, loginForm);
     }
     
     @Override
