@@ -8,7 +8,6 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
-import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -25,26 +24,23 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.spring.security.AuthenticationContext;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Route("customers")
+@Route(value = "customers", layout = MainLayout.class)
 @PageTitle("Customers")
 @PermitAll
 public class CustomerView extends VerticalLayout {
-    
+
     private final CustomerService customerService;
-    private final AuthenticationContext authenticationContext;
     private final Grid<Customer> grid = new Grid<>(Customer.class, false);
     private final TextField filterText = new TextField();
     
     private Customer selectedCustomer;
     
     @Autowired
-    public CustomerView(CustomerService customerService, AuthenticationContext authenticationContext) {
+    public CustomerView(CustomerService customerService) {
         this.customerService = customerService;
-        this.authenticationContext = authenticationContext;
         
         addClassName("customer-view");
         setSizeFull();
@@ -52,32 +48,11 @@ public class CustomerView extends VerticalLayout {
         configureGrid();
         
         add(
-            createHeader(),
             createToolbar(),
             grid
         );
         
         updateList();
-    }
-    
-    private HorizontalLayout createHeader() {
-        H1 title = new H1("Customers");
-        
-        Button backButton = new Button("Back to Main", new Icon(VaadinIcon.ARROW_LEFT));
-        backButton.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate("")));
-        
-        Button logoutButton = new Button("Logout");
-        logoutButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        logoutButton.addClickListener(e -> {
-            authenticationContext.logout();
-        });
-        
-        HorizontalLayout header = new HorizontalLayout(title, backButton, logoutButton);
-        header.setWidthFull();
-        header.setJustifyContentMode(JustifyContentMode.BETWEEN);
-        header.setAlignItems(Alignment.CENTER);
-        
-        return header;
     }
     
     private HorizontalLayout createToolbar() {

@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.format.DateTimeFormatter;
 
-@Route("home")
+@Route(value = "home", layout = MainLayout.class)
 @PageTitle("Intervention Logs")
 @PermitAll
 public class HomepageView extends VerticalLayout {
@@ -42,7 +42,6 @@ public class HomepageView extends VerticalLayout {
         configureGrid();
 
         add(
-                createHeader(),
                 createToolbar(),
                 grid
         );
@@ -50,22 +49,7 @@ public class HomepageView extends VerticalLayout {
         updateList();
     }
 
-    private HorizontalLayout createHeader() {
-        H1 title = new H1("Intervention Logs");
-
-        Button logoutButton = new Button("Logout");
-        logoutButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        logoutButton.addClickListener(e -> {
-            authenticationContext.logout();
-        });
-
-        HorizontalLayout header = new HorizontalLayout(title, logoutButton);
-        header.setWidthFull();
-        header.setJustifyContentMode(JustifyContentMode.BETWEEN);
-        header.setAlignItems(Alignment.CENTER);
-
-        return header;
-    }
+    private HorizontalLayout createHeader() { return new HorizontalLayout(); }
 
     private HorizontalLayout createToolbar() {
         filterText.setPlaceholder("Filter by username or description...");

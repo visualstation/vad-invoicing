@@ -6,26 +6,23 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
-import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.spring.security.AuthenticationContext;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.format.DateTimeFormatter;
 
-@Route("")
+@Route(value = "", layout = MainLayout.class)
 @PageTitle("Intervention Logs")
 @PermitAll
 public class MainView extends VerticalLayout {
-    
+
     private final InterventionLogService logService;
-    private final AuthenticationContext authenticationContext;
     private final Grid<InterventionLog> grid = new Grid<>(InterventionLog.class, false);
     private final TextField filterText = new TextField();
     
@@ -33,9 +30,8 @@ public class MainView extends VerticalLayout {
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     
     @Autowired
-    public MainView(InterventionLogService logService, AuthenticationContext authenticationContext) {
+    public MainView(InterventionLogService logService) {
         this.logService = logService;
-        this.authenticationContext = authenticationContext;
         
         addClassName("main-view");
         setSizeFull();
@@ -43,37 +39,11 @@ public class MainView extends VerticalLayout {
         configureGrid();
         
         add(
-            createHeader(),
             createToolbar(),
             grid
         );
         
         updateList();
-    }
-    
-    private HorizontalLayout createHeader() {
-        H1 title = new H1("Intervention Logs");
-        
-        Button customersButton = new Button("Customers");
-        customersButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
-        customersButton.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate("customers")));
-
-        Button devicesButton = new Button("Devices");
-        devicesButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
-        devicesButton.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate("devices")));
-        
-        Button logoutButton = new Button("Logout");
-        logoutButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        logoutButton.addClickListener(e -> {
-            authenticationContext.logout();
-        });
-        
-        HorizontalLayout header = new HorizontalLayout(title, customersButton, devicesButton, logoutButton);
-        header.setWidthFull();
-        header.setJustifyContentMode(JustifyContentMode.BETWEEN);
-        header.setAlignItems(Alignment.CENTER);
-        
-        return header;
     }
     
     private HorizontalLayout createToolbar() {
