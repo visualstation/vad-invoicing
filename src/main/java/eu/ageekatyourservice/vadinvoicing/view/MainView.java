@@ -56,9 +56,11 @@ public class MainView extends VerticalLayout {
         
         Button customersButton = new Button("Customers");
         customersButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
-        customersButton.addClickListener(e -> {
-            getUI().ifPresent(ui -> ui.navigate("customers"));
-        });
+        customersButton.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate("customers")));
+
+        Button devicesButton = new Button("Devices");
+        devicesButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
+        devicesButton.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate("devices")));
         
         Button logoutButton = new Button("Logout");
         logoutButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -66,7 +68,7 @@ public class MainView extends VerticalLayout {
             authenticationContext.logout();
         });
         
-        HorizontalLayout header = new HorizontalLayout(title, customersButton, logoutButton);
+        HorizontalLayout header = new HorizontalLayout(title, customersButton, devicesButton, logoutButton);
         header.setWidthFull();
         header.setJustifyContentMode(JustifyContentMode.BETWEEN);
         header.setAlignItems(Alignment.CENTER);
