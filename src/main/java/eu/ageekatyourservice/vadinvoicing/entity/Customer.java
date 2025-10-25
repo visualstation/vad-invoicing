@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "customers")
@@ -35,4 +37,7 @@ public class Customer {
     private String phoneNumber;
     
     private String email;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Device> devices = new LinkedHashSet<>();
 }
