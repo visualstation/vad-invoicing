@@ -8,6 +8,8 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -34,8 +36,12 @@ public class Device {
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "customer_id", nullable = false)
     @NotNull
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Customer customer;
 
-    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<DeviceComment> comments = new LinkedHashSet<>();
 }

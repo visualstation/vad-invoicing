@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashSet;
@@ -38,6 +40,8 @@ public class Customer {
     
     private String email;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<Device> devices = new LinkedHashSet<>();
 }
