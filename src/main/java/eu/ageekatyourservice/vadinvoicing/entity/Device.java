@@ -40,7 +40,7 @@ public class Device {
     @EqualsAndHashCode.Exclude
     private Customer customer;
 
-    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<DeviceComment> comments = new LinkedHashSet<>();
