@@ -17,6 +17,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class Device {
 
     // Primary key: 9-10 digit numeric id, unique
@@ -30,11 +31,11 @@ public class Device {
     @Size(max = 255)
     private String label;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "customer_id", nullable = false)
     @NotNull
     private Customer customer;
 
-    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<DeviceComment> comments = new LinkedHashSet<>();
 }
