@@ -58,7 +58,7 @@ public class MainLayout extends AppLayout {
         drawerLayout.setPadding(false);
         drawerLayout.setSpacing(false);
         drawerLayout.getStyle()
-            .set("background-color", "var(--lumo-contrast-5pct)");
+            .set("background-color", "white");
         
         // App info section
         VerticalLayout appInfo = new VerticalLayout();
@@ -96,7 +96,8 @@ public class MainLayout extends AppLayout {
             createNavLink("Devices", VaadinIcon.LAPTOP, "devices"),
             new Hr(),
             createMenuHeader("System"),
-            createNavLink("Intervention Logs", VaadinIcon.FILE_TEXT, "logs")
+            createNavLink("Intervention Logs", VaadinIcon.FILE_TEXT, "logs"),
+            createNavLink("Users", VaadinIcon.USER, "users")
         );
         
         drawerLayout.add(appInfo, navigation);
@@ -164,6 +165,7 @@ public class MainLayout extends AppLayout {
             case "customers" -> CustomerView.class;
             case "devices" -> DeviceView.class;
             case "logs" -> InterventionLogsView.class;
+            case "users" -> UsersView.class;
             default -> MainView.class;
         };
     }

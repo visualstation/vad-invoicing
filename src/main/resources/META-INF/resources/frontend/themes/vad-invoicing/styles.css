@@ -15,7 +15,7 @@ vaadin-app-layout {
 }
 
 vaadin-app-layout::part(drawer) {
-    background-color: var(--lumo-contrast-5pct);
+    background-color: white; /* make sidebar solid, not transparent */
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
 }
 
