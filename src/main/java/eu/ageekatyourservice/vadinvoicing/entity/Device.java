@@ -19,6 +19,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class Device {
 
     // Primary key: 9-10 digit numeric id, unique
@@ -32,7 +33,7 @@ public class Device {
     @Size(max = 255)
     private String label;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "customer_id", nullable = false)
     @NotNull
     @ToString.Exclude

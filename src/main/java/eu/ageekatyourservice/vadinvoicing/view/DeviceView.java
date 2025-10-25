@@ -144,11 +144,11 @@ public class DeviceView extends VerticalLayout {
             .setWidth("150px")
             .setFlexGrow(0);
 
-        deviceGrid.addColumn(d -> d.getCustomer() != null ? d.getCustomer().getName() : "")
-            .setHeader("Customer")
-            .setSortable(true)
-            .setAutoWidth(true)
-            .setFlexGrow(1);
+        //deviceGrid.addColumn(d -> d.getCustomer() != null ? d.getCustomer().getName() : "")
+        //    .setHeader("Customer")
+        //    .setSortable(true)
+        //    .setAutoWidth(true)
+        //    .setFlexGrow(1);
 
         deviceGrid.addColumn(Device::getLabel)
             .setHeader("Label")
