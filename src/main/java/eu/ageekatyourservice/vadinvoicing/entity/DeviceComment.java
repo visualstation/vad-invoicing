@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
@@ -24,6 +26,8 @@ public class DeviceComment {
     @ManyToOne(optional = false)
     @JoinColumn(name = "device_id", nullable = false)
     @NotNull
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Device device;
 
     @Column(nullable = false, length = 2000)
