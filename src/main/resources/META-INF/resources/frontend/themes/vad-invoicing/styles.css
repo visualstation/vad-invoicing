@@ -15,7 +15,7 @@ vaadin-app-layout {
 }
 
 vaadin-app-layout::part(drawer) {
-    background-color: var(--lumo-contrast-5pct);
+    background-color: #f5f5f5;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -152,7 +152,7 @@ h2 {
 }
 
 [theme~="dark"] vaadin-app-layout::part(drawer) {
-    background-color: var(--lumo-contrast-10pct);
+    background-color: #1a1a1a;
 }
 
 /* Loading state */
