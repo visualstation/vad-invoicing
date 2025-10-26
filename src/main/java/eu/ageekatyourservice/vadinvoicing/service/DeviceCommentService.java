@@ -1,28 +1,43 @@
 package eu.ageekatyourservice.vadinvoicing.service;
 
-import eu.ageekatyourservice.vadinvoicing.entity.Device;
-import eu.ageekatyourservice.vadinvoicing.entity.DeviceComment;
+import eu.ageekatyourservice.vadinvoicing.model.Device;
+import eu.ageekatyourservice.vadinvoicing.model.DeviceComment;
 import eu.ageekatyourservice.vadinvoicing.repository.DeviceCommentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DeviceCommentService {
 
-    @Autowired
-    private DeviceCommentRepository repository;
+    private final DeviceCommentRepository repository;
+
+    public DeviceCommentService(DeviceCommentRepository repository) {
+        this.repository = repository;
+    }
+
+    public List<DeviceComment> findAllDeviceComments() {
+        return repository.findAll();
+    }
+
+    public Optional<DeviceComment> findDeviceCommentById(Long id) {
+        return repository.findById(id);
+    }
 
     public List<DeviceComment> findByDevice(Device device) {
         return repository.findByDeviceOrderByCreatedAtDesc(device);
     }
 
-    public DeviceComment save(DeviceComment comment) {
+    public List<DeviceComment> findByDeviceId(Long deviceId) {
+        return repository.findByDeviceId(deviceId);
+    }
+
+    public DeviceComment saveDeviceComment(DeviceComment comment) {
         return repository.save(comment);
     }
 
-    public void delete(Long id) {
+    public void deleteDeviceComment(Long id) {
         repository.deleteById(id);
     }
 }

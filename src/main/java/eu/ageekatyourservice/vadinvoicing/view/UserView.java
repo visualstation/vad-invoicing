@@ -1,6 +1,6 @@
 package eu.ageekatyourservice.vadinvoicing.view;
 
-import eu.ageekatyourservice.vadinvoicing.entity.User;
+import eu.ageekatyourservice.vadinvoicing.model.User;
 import eu.ageekatyourservice.vadinvoicing.service.UserService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -168,13 +168,9 @@ public class UserView extends VerticalLayout {
                         showNotification("Password is required for new users", NotificationVariant.LUMO_ERROR);
                         return;
                     }
-                    userService.saveUserWithEncodedPassword(selectedUser, plainPassword);
+                    userService.createUser(selectedUser);
                 } else {
-                    if (plainPassword != null && !plainPassword.isEmpty()) {
-                        userService.saveUserWithEncodedPassword(selectedUser, plainPassword);
-                    } else {
-                        userService.saveUser(selectedUser);
-                    }
+                    userService.updateUser(selectedUser);
                 }
                 
                 updateList();
@@ -240,9 +236,9 @@ public class UserView extends VerticalLayout {
         String filterValue = filterText.getValue();
         
         if (filterValue == null || filterValue.isEmpty()) {
-            grid.setItems(userService.getAllUsers());
+            grid.setItems(userService.findAllUsers());
         } else {
-            grid.setItems(userService.getAllUsers().stream()
+            grid.setItems(userService.findAllUsers().stream()
                 .filter(user -> 
                     (user.getUsername() != null && user.getUsername().toLowerCase().contains(filterValue.toLowerCase())) ||
                     (user.getRole() != null && user.getRole().toLowerCase().contains(filterValue.toLowerCase()))

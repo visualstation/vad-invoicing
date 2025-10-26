@@ -23,9 +23,9 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.security.AuthenticationContext;
-import eu.ageekatyourservice.vadinvoicing.entity.Customer;
-import eu.ageekatyourservice.vadinvoicing.entity.Device;
-import eu.ageekatyourservice.vadinvoicing.entity.DeviceComment;
+import eu.ageekatyourservice.vadinvoicing.model.Customer;
+import eu.ageekatyourservice.vadinvoicing.model.Device;
+import eu.ageekatyourservice.vadinvoicing.model.DeviceComment;
 import eu.ageekatyourservice.vadinvoicing.service.CustomerService;
 import eu.ageekatyourservice.vadinvoicing.service.DeviceCommentService;
 import eu.ageekatyourservice.vadinvoicing.service.DeviceService;
@@ -196,7 +196,7 @@ public class DeviceView extends VerticalLayout {
 
         // Customer selection
         com.vaadin.flow.component.combobox.ComboBox<Customer> customerCombo = new com.vaadin.flow.component.combobox.ComboBox<>("Customer");
-        customerCombo.setItems(customerService.getAllCustomers());
+        customerCombo.setItems(customerService.findAllCustomers());
         customerCombo.setItemLabelGenerator(Customer::getName);
         customerCombo.setWidthFull();
 
@@ -224,7 +224,7 @@ public class DeviceView extends VerticalLayout {
         saveButton.addClickListener(e -> {
             try {
                 binder.writeBean(formBean);
-                deviceService.save(formBean);
+                deviceService.saveDevice(formBean);
                 updateDeviceList();
                 dialog.close();
                 showNotification(isNew ? "Device created" : "Device updated", NotificationVariant.LUMO_SUCCESS);
@@ -281,7 +281,7 @@ public class DeviceView extends VerticalLayout {
         saveButton.addClickListener(e -> {
             try {
                 binder.writeBean(formBean);
-                commentService.save(formBean);
+                commentService.saveDeviceComment(formBean);
                 refreshComments();
                 dialog.close();
                 showNotification(isNew ? "Comment added" : "Comment updated", NotificationVariant.LUMO_SUCCESS);
@@ -311,7 +311,7 @@ public class DeviceView extends VerticalLayout {
         deleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
         deleteButton.addClickListener(e -> {
             try {
-                deviceService.delete(device.getId());
+                deviceService.deleteDevice(device.getId());
                 updateDeviceList();
                 confirmDialog.close();
                 showNotification("Device deleted", NotificationVariant.LUMO_SUCCESS);
@@ -347,7 +347,7 @@ public class DeviceView extends VerticalLayout {
         deleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
         deleteButton.addClickListener(e -> {
             try {
-                commentService.delete(comment.getId());
+                commentService.deleteDeviceComment(comment.getId());
                 refreshComments();
                 confirmDialog.close();
                 showNotification("Comment deleted", NotificationVariant.LUMO_SUCCESS);
@@ -373,9 +373,9 @@ public class DeviceView extends VerticalLayout {
     private void updateDeviceList() {
         String filterValue = filterText.getValue();
         if (filterValue == null || filterValue.isEmpty()) {
-            deviceGrid.setItems(deviceService.getAll());
+            deviceGrid.setItems(deviceService.findAllDevices());
         } else {
-            deviceGrid.setItems(deviceService.getAll().stream()
+            deviceGrid.setItems(deviceService.findAllDevices().stream()
                     .filter(d ->
                             (d.getLabel() != null && d.getLabel().toLowerCase().contains(filterValue.toLowerCase())) ||
                             (String.valueOf(d.getId()).contains(filterValue))

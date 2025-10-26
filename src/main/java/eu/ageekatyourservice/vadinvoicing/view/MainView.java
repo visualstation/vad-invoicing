@@ -51,15 +51,15 @@ public class MainView extends VerticalLayout {
         
         statsLayout.add(
             createStatCard("Total Customers", 
-                String.valueOf(customerService.getAllCustomers().size()), 
+                String.valueOf(customerService.findAllCustomers().size()), 
                 VaadinIcon.USERS, 
                 "#2196F3"),
             createStatCard("Total Devices", 
-                String.valueOf(deviceService.getAll().size()), 
+                String.valueOf(deviceService.findAllDevices().size()), 
                 VaadinIcon.LAPTOP, 
                 "#4CAF50"),
             createStatCard("Total Logs", 
-                String.valueOf(logService.getAllLogs().size()), 
+                String.valueOf(logService.findAllInterventionLogs().size()), 
                 VaadinIcon.FILE_TEXT, 
                 "#FF9800")
         );

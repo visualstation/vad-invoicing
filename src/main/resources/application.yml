@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: Visual Any Desk Invoicing
+  
+  profiles:
+    active: dev
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  port: 8080
+
+# Vaadin Configuration
+vaadin:
+  launch-browser: true
+  whitelisted-packages: eu.ageekatyourservice.vadinvoicing
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:changeme-this-is-a-default-secret-key-for-development-only-please-change-in-production}
+  expiration: 86400000 # 24 hours in milliseconds
+
+# Swagger/OpenAPI Configuration
+springdoc:
+  api-docs:
+    path: /api/v3/api-docs
+  swagger-ui:
+    path: /api/swagger-ui.html
+    enabled: true

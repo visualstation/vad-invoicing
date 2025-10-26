@@ -1,6 +1,6 @@
 package eu.ageekatyourservice.vadinvoicing.view;
 
-import eu.ageekatyourservice.vadinvoicing.entity.Customer;
+import eu.ageekatyourservice.vadinvoicing.model.Customer;
 import eu.ageekatyourservice.vadinvoicing.service.CustomerService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -252,9 +252,9 @@ public class CustomerView extends VerticalLayout {
         String filterValue = filterText.getValue();
         
         if (filterValue == null || filterValue.isEmpty()) {
-            grid.setItems(customerService.getAllCustomers());
+            grid.setItems(customerService.findAllCustomers());
         } else {
-            grid.setItems(customerService.getAllCustomers().stream()
+            grid.setItems(customerService.findAllCustomers().stream()
                 .filter(customer -> 
                     (customer.getName() != null && customer.getName().toLowerCase().contains(filterValue.toLowerCase())) ||
                     (customer.getEmail() != null && customer.getEmail().toLowerCase().contains(filterValue.toLowerCase()))

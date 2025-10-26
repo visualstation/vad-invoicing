@@ -1,10 +1,9 @@
 package eu.ageekatyourservice.vadinvoicing;
 
-import eu.ageekatyourservice.vadinvoicing.entity.InterventionLog;
-import eu.ageekatyourservice.vadinvoicing.entity.User;
+import eu.ageekatyourservice.vadinvoicing.model.InterventionLog;
+import eu.ageekatyourservice.vadinvoicing.model.User;
 import eu.ageekatyourservice.vadinvoicing.repository.InterventionLogRepository;
 import eu.ageekatyourservice.vadinvoicing.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -15,14 +14,17 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class DataInitializer implements CommandLineRunner {
     
-    @Autowired
-    private UserRepository userRepository;
-    
-    @Autowired
-    private InterventionLogRepository logRepository;
-    
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final InterventionLogRepository logRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public DataInitializer(UserRepository userRepository, 
+                          InterventionLogRepository logRepository,
+                          PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.logRepository = logRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
     
     private static final DateTimeFormatter FORMATTER = 
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

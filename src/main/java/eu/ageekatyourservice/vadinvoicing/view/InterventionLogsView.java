@@ -24,7 +24,7 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.security.AuthenticationContext;
-import eu.ageekatyourservice.vadinvoicing.entity.InterventionLog;
+import eu.ageekatyourservice.vadinvoicing.model.InterventionLog;
 import eu.ageekatyourservice.vadinvoicing.service.InterventionLogService;
 import jakarta.annotation.security.PermitAll;
 
@@ -216,7 +216,7 @@ public class InterventionLogsView extends VerticalLayout {
         saveButton.addClickListener(e -> {
             try {
                 binder.writeBean(formBean);
-                logService.saveLog(formBean);
+                logService.saveInterventionLog(formBean);
                 updateList();
                 dialog.close();
                 showNotification(isNew ? "Log created successfully" : "Log updated successfully", NotificationVariant.LUMO_SUCCESS);
@@ -253,7 +253,7 @@ public class InterventionLogsView extends VerticalLayout {
         deleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
         deleteButton.addClickListener(e -> {
             try {
-                logService.deleteLog(log.getId());
+                logService.deleteInterventionLog(log.getId());
                 updateList();
                 confirmDialog.close();
                 showNotification("Log deleted successfully", NotificationVariant.LUMO_SUCCESS);
@@ -280,9 +280,9 @@ public class InterventionLogsView extends VerticalLayout {
         String filterValue = filterText.getValue();
         
         if (filterValue == null || filterValue.isEmpty()) {
-            grid.setItems(logService.getAllLogs());
+            grid.setItems(logService.findAllInterventionLogs());
         } else {
-            grid.setItems(logService.getAllLogs().stream()
+            grid.setItems(logService.findAllInterventionLogs().stream()
                 .filter(log -> 
                     log.getUsername().toLowerCase().contains(filterValue.toLowerCase()) ||
                     log.getDescription().toLowerCase().contains(filterValue.toLowerCase())

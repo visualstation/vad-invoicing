@@ -1,7 +1,7 @@
 package eu.ageekatyourservice.vadinvoicing.repository;
 
-import eu.ageekatyourservice.vadinvoicing.entity.Device;
-import eu.ageekatyourservice.vadinvoicing.entity.DeviceComment;
+import eu.ageekatyourservice.vadinvoicing.model.Device;
+import eu.ageekatyourservice.vadinvoicing.model.DeviceComment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface DeviceCommentRepository extends JpaRepository<DeviceComment, Long> {
     List<DeviceComment> findByDeviceOrderByCreatedAtDesc(Device device);
+    List<DeviceComment> findByDeviceId(Long deviceId);
 }

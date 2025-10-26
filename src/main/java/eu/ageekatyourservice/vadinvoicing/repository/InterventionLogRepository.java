@@ -1,6 +1,6 @@
 package eu.ageekatyourservice.vadinvoicing.repository;
 
-import eu.ageekatyourservice.vadinvoicing.entity.InterventionLog;
+import eu.ageekatyourservice.vadinvoicing.model.InterventionLog;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,4 +15,6 @@ public interface InterventionLogRepository extends JpaRepository<InterventionLog
     List<InterventionLog> findByUsernameContaining(String username);
     
     List<InterventionLog> findByDescriptionContaining(String description);
+    
+    List<InterventionLog> findByClientId(String clientId);
 }
