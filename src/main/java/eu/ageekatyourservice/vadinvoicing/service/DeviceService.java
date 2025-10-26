@@ -12,8 +12,11 @@ import java.util.Optional;
 @Service
 public class DeviceService {
 
-    @Autowired
-    private DeviceRepository repository;
+    private final DeviceRepository repository;
+
+    public DeviceService(DeviceRepository repository) {
+        this.repository = repository;
+    }
 
     public List<Device> getAll() {
         return repository.findAll();

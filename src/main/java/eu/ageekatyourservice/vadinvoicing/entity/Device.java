@@ -20,7 +20,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
+@JsonIgnoreProperties({"comments"})
 public class Device {
 
     // Primary key: 9-10 digit numeric id, unique

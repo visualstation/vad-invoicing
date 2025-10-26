@@ -11,8 +11,11 @@ import java.util.Optional;
 @Service
 public class CustomerService {
     
-    @Autowired
-    private CustomerRepository repository;
+    private final CustomerRepository repository;
+
+    public CustomerService(CustomerRepository repository) {
+        this.repository = repository;
+    }
     
     public List<Customer> getAllCustomers() {
         return repository.findAll();
