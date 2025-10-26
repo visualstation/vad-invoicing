@@ -1,0 +1,72 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: Visual Any Desk Invoicing
+  profiles:
+    active: dev
+  datasource:
+    hikari:
+      maximum-pool-size: 5
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+# Database selection: h2 | mysql | postgres
+app:
+  database: h2
+  jwt:
+    # Use a proper secret in production via env var: APP_JWT_SECRET
+    secret: ${APP_JWT_SECRET:change-me-please-32-bytes-minimum-secret}
+    expiration: 3600000 # 1 hour in ms
+
+---
+# Development profile
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:h2:mem:logdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+  h2:
+    console:
+      enabled: true
+vaadin:
+  launch-browser: true
+  whitelisted-packages: eu.ageekatyourservice.vadinvoicing
+
+---
+# Production profile
+spring:
+  config:
+    activate:
+      on-profile: prod
+  jpa:
+    show-sql: false
+
+# Select DB by setting app.database=postgres or mysql via env var in prod
+# Example MySQL
+# spring:
+#   datasource:
+#     url: jdbc:mysql://localhost:3306/vadinvoicing?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+#     driver-class-name: com.mysql.cj.jdbc.Driver
+#     username: root
+#     password: secret
+#   jpa:
+#     database-platform: org.hibernate.dialect.MySQL8Dialect
+# Example PostgreSQL
+# spring:
+#   datasource:
+#     url: jdbc:postgresql://localhost:5432/vadinvoicing
+#     driver-class-name: org.postgresql.Driver
+#     username: postgres
+#     password: secret
+#   jpa:
+#     database-platform: org.hibernate.dialect.PostgreSQLDialect
