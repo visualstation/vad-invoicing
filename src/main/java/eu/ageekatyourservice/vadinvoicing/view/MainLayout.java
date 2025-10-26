@@ -93,8 +93,10 @@ public class MainLayout extends AppLayout {
             createNavLink("Customers", VaadinIcon.USERS, "customers"),
             createNavLink("Devices", VaadinIcon.LAPTOP, "devices"),
             new Hr(),
-            createMenuHeader("System"),
+            createMenuHeader("Works"),
             createNavLink("Intervention Logs", VaadinIcon.FILE_TEXT, "logs"),
+            new Hr(),
+            createMenuHeader("System"),
             createNavLink("Users", VaadinIcon.USER, "users")
         );
         

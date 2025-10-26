@@ -19,23 +19,26 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Device {
 
-    // Primary key: 9-10 digit numeric id, unique
     @Id
     @Min(100000000L)
     @Max(9999999999L)
     private Long id;
 
-    // Optional human-friendly label
+    @Column(length = 255)
+    @Size(max = 255)
+    private String alias;
+
+    @Column(length = 2000)
+    private String comment;
+
     @Column(length = 255)
     @Size(max = 255)
     private String label;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    @JoinColumn(name = "customer_id", nullable = false)
-    @NotNull
+    @ManyToOne(optional = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "customer_id", nullable = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Customer customer;

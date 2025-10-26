@@ -26,10 +26,15 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.security.AuthenticationContext;
 import eu.ageekatyourservice.vadinvoicing.entity.InterventionLog;
 import eu.ageekatyourservice.vadinvoicing.service.InterventionLogService;
+import eu.ageekatyourservice.vadinvoicing.service.ExcelExportService;
+import com.vaadin.flow.server.StreamResource;
 import jakarta.annotation.security.PermitAll;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Route(value = "logs", layout = MainLayout.class)
 @PageTitle("Intervention Logs | VAD Invoicing")
@@ -37,14 +42,19 @@ import java.time.format.DateTimeFormatter;
 public class InterventionLogsView extends VerticalLayout {
     
     private final InterventionLogService logService;
+    private final ExcelExportService excelExportService;
     private final Grid<InterventionLog> grid = new Grid<>(InterventionLog.class, false);
     private final TextField filterText = new TextField();
     
     private static final DateTimeFormatter DATE_FORMATTER = 
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     
-    public InterventionLogsView(InterventionLogService logService, AuthenticationContext authenticationContext) {
+    @Autowired
+    public InterventionLogsView(InterventionLogService logService, 
+                                ExcelExportService excelExportService,
+                                AuthenticationContext authenticationContext) {
         this.logService = logService;
+        this.excelExportService = excelExportService;
         
         addClassName("intervention-logs-view");
         setSizeFull();
@@ -74,12 +84,60 @@ public class InterventionLogsView extends VerticalLayout {
         Button refreshButton = new Button("Refresh", new Icon(VaadinIcon.REFRESH));
         refreshButton.addClickListener(e -> updateList());
         
-        HorizontalLayout toolbar = new HorizontalLayout(filterText, addButton, refreshButton);
+        Button exportButton = new Button("Export to Excel", new Icon(VaadinIcon.DOWNLOAD));
+        exportButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
+        exportButton.addClickListener(e -> exportToExcel());
+        
+        HorizontalLayout toolbar = new HorizontalLayout(filterText, addButton, refreshButton, exportButton);
         toolbar.setAlignItems(Alignment.CENTER);
         toolbar.setWidthFull();
         toolbar.setJustifyContentMode(JustifyContentMode.START);
         
         return toolbar;
+    }
+    
+    private void exportToExcel() {
+        try {
+            List<InterventionLog> logsToExport;
+            String filterValue = filterText.getValue();
+            
+            if (filterValue == null || filterValue.isEmpty()) {
+                logsToExport = logService.getAllLogs();
+            } else {
+                logsToExport = logService.getAllLogs().stream()
+                    .filter(log -> 
+                        log.getUsername().toLowerCase().contains(filterValue.toLowerCase()) ||
+                        log.getDescription().toLowerCase().contains(filterValue.toLowerCase())
+                    )
+                    .toList();
+            }
+            
+            if (logsToExport.isEmpty()) {
+                showNotification("No logs to export", NotificationVariant.LUMO_WARNING);
+                return;
+            }
+            
+            byte[] excelData = excelExportService.exportInterventionLogsToExcel(logsToExport);
+            
+            StreamResource resource = new StreamResource(
+                "intervention_logs_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".xlsx",
+                () -> new ByteArrayInputStream(excelData)
+            );
+            
+            // Create anchor to trigger download
+            com.vaadin.flow.component.html.Anchor downloadLink = new com.vaadin.flow.component.html.Anchor(resource, "");
+            downloadLink.getElement().setAttribute("download", true);
+            downloadLink.getElement().getStyle().set("display", "none");
+            add(downloadLink);
+            
+            // Trigger download and remove link
+            downloadLink.getElement().callJsFunction("click");
+            downloadLink.getElement().removeFromParent();
+            
+            showNotification("Export successful! Downloading " + logsToExport.size() + " log(s)", NotificationVariant.LUMO_SUCCESS);
+        } catch (Exception ex) {
+            showNotification("Error exporting to Excel: " + ex.getMessage(), NotificationVariant.LUMO_ERROR);
+        }
     }
     
     private void configureGrid() {

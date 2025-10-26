@@ -120,14 +120,20 @@ public class DeviceView extends VerticalLayout {
             .setWidth("150px")
             .setFlexGrow(0);
 
-        //deviceGrid.addColumn(d -> d.getCustomer() != null ? d.getCustomer().getName() : "")
-        //    .setHeader("Customer")
-        //    .setSortable(true)
-        //    .setAutoWidth(true)
-        //    .setFlexGrow(1);
+        deviceGrid.addColumn(Device::getAlias)
+            .setHeader("Alias")
+            .setSortable(true)
+            .setAutoWidth(true)
+            .setFlexGrow(1);
 
         deviceGrid.addColumn(Device::getLabel)
             .setHeader("Label")
+            .setSortable(true)
+            .setAutoWidth(true)
+            .setFlexGrow(1);
+
+        deviceGrid.addColumn(d -> d.getCustomer() != null ? d.getCustomer().getName() : "N/A")
+            .setHeader("Customer")
             .setSortable(true)
             .setAutoWidth(true)
             .setFlexGrow(1);
@@ -176,7 +182,7 @@ public class DeviceView extends VerticalLayout {
 
     private void openDeviceDialog(Device device) {
         Dialog dialog = new Dialog();
-        dialog.setWidth("600px");
+        dialog.setWidth("700px");
 
         boolean isNew = device == null;
         Device formBean = isNew ? new Device() : device;
@@ -191,14 +197,23 @@ public class DeviceView extends VerticalLayout {
         idField.setWidthFull();
         idField.setEnabled(isNew); // id is PK, not editable when editing
 
+        TextField aliasField = new TextField("Alias");
+        aliasField.setWidthFull();
+
         TextField labelField = new TextField("Label");
         labelField.setWidthFull();
 
-        // Customer selection
-        com.vaadin.flow.component.combobox.ComboBox<Customer> customerCombo = new com.vaadin.flow.component.combobox.ComboBox<>("Customer");
+        TextArea commentArea = new TextArea("Comment");
+        commentArea.setWidthFull();
+        commentArea.setMinHeight("100px");
+        commentArea.setMaxLength(2000);
+
+        // Customer selection - now optional
+        com.vaadin.flow.component.combobox.ComboBox<Customer> customerCombo = new com.vaadin.flow.component.combobox.ComboBox<>("Customer (Optional)");
         customerCombo.setItems(customerService.getAllCustomers());
         customerCombo.setItemLabelGenerator(Customer::getName);
         customerCombo.setWidthFull();
+        customerCombo.setClearButtonVisible(true);
 
         Binder<Device> binder = new BeanValidationBinder<>(Device.class);
         binder.forField(idField).withValidator(val -> val != null && val >= 100000000d && val <= 9999999999d,
@@ -206,14 +221,16 @@ public class DeviceView extends VerticalLayout {
                 d -> d.getId() == null ? null : d.getId().doubleValue(),
                 (d, val) -> d.setId(val == null ? null : val.longValue())
         );
+        binder.bind(aliasField, Device::getAlias, Device::setAlias);
         binder.bind(labelField, Device::getLabel, Device::setLabel);
-        binder.forField(customerCombo).asRequired("Customer is required")
-                .bind(Device::getCustomer, Device::setCustomer);
+        binder.bind(commentArea, Device::getComment, Device::setComment);
+        binder.bind(customerCombo, Device::getCustomer, Device::setCustomer);
 
         binder.readBean(formBean);
 
         FormLayout formLayout = new FormLayout();
-        formLayout.add(idField, customerCombo, labelField);
+        formLayout.add(idField, aliasField, labelField, customerCombo);
+        formLayout.add(commentArea, 2);
         formLayout.setResponsiveSteps(
                 new FormLayout.ResponsiveStep("0", 1),
                 new FormLayout.ResponsiveStep("500px", 2)
@@ -378,6 +395,7 @@ public class DeviceView extends VerticalLayout {
             deviceGrid.setItems(deviceService.getAll().stream()
                     .filter(d ->
                             (d.getLabel() != null && d.getLabel().toLowerCase().contains(filterValue.toLowerCase())) ||
+                            (d.getAlias() != null && d.getAlias().toLowerCase().contains(filterValue.toLowerCase())) ||
                             (String.valueOf(d.getId()).contains(filterValue))
                     ).toList());
         }

@@ -23,6 +23,10 @@ public class DeviceService {
         return repository.findById(id);
     }
 
+    public Optional<Device> findById(Long id) {
+        return repository.findById(id);
+    }
+
     public Device save(Device device) {
         return repository.save(device);
     }

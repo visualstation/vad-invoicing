@@ -14,8 +14,16 @@ public class DeviceCommentService {
     @Autowired
     private DeviceCommentRepository repository;
 
+    public List<DeviceComment> findAll() {
+        return repository.findAll();
+    }
+
     public List<DeviceComment> findByDevice(Device device) {
         return repository.findByDeviceOrderByCreatedAtDesc(device);
+    }
+
+    public java.util.Optional<DeviceComment> findById(Long id) {
+        return repository.findById(id);
     }
 
     public DeviceComment save(DeviceComment comment) {

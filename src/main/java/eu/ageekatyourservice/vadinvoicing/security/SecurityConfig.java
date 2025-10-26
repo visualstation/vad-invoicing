@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableWebSecurity
@@ -18,6 +19,9 @@ public class SecurityConfig extends VaadinWebSecurity {
     
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
+    
+    @Autowired
+    private ApiTokenFilter apiTokenFilter;
     
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -29,9 +33,16 @@ public class SecurityConfig extends VaadinWebSecurity {
         http.authorizeHttpRequests(auth ->
             auth.requestMatchers(
                 new AntPathRequestMatcher("/images/*.png"),
-                new AntPathRequestMatcher("/h2-console/**")
+                new AntPathRequestMatcher("/h2-console/**"),
+                new AntPathRequestMatcher("/api/**")
             ).permitAll()
         );
+        
+        // Add API token filter before authentication
+        http.addFilterBefore(apiTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        
+        // Disable CSRF for API endpoints
+        http.csrf(csrf -> csrf.ignoringRequestMatchers(new AntPathRequestMatcher("/api/**")));
         
         super.configure(http);
         setLoginView(http, LoginView.class);
