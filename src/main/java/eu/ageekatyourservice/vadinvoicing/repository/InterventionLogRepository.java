@@ -2,13 +2,14 @@ package eu.ageekatyourservice.vadinvoicing.repository;
 
 import eu.ageekatyourservice.vadinvoicing.entity.InterventionLog;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface InterventionLogRepository extends JpaRepository<InterventionLog, Long> {
+public interface InterventionLogRepository extends JpaRepository<InterventionLog, Long>, JpaSpecificationExecutor<InterventionLog> {
     
     List<InterventionLog> findByTimestampBetween(LocalDateTime start, LocalDateTime end);
     

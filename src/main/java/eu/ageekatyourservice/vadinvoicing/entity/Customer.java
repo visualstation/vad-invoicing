@@ -10,6 +10,8 @@ import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Set;
 
 @Entity
@@ -46,4 +48,10 @@ public class Customer {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Device> devices = new LinkedHashSet<>();
+
+    // List of regex rules used to filter logs for this customer
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "customer_rules", joinColumns = @JoinColumn(name = "customer_id"))
+    @Column(name = "rule", length = 1000)
+    private List<String> rules = new ArrayList<>();
 }

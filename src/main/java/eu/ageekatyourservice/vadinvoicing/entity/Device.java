@@ -39,6 +39,11 @@ public class Device {
     @Size(max = 255)
     private String alias;
 
+    // Device username used in logs to identify this device
+    @Column(length = 255, unique = false)
+    @Size(max = 255)
+    private String username;
+
     // Optional free-text comment. Use a safe column name across DBs
     @Column(name = "comment_text", length = 2000)
     @Size(max = 2000)
